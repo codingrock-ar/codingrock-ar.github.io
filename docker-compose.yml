@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+
+   php-cr:
+     build: .
+     image: php-cr:latest
+     ports:
+      - 8085:80
+     extra_hosts:
+      - "host.address:host-gateway"
+     container_name: php-cr
+     volumes:
+      - .:/var/www/html
