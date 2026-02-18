@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ariel E. Rocca - Portafolio</title>
+    <!-- Tailwind CSS para estilos rápidos y modernos -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Vue.js 2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <!-- FontAwesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Personalización adicional */
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600&family=Inter:wght@300;400;600;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Slate 900 */
+            color: #e2e8f0; /* Slate 200 */
+        }
+
+        .font-code {
+            font-family: 'Fira Code', monospace;
+        }
+
+        /* Animación suave para el scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .gradient-text {
+            background: linear-gradient(to right, #4ade80, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Timeline Styles */
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 100%;
+            background-color: #334155;
+            z-index: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .timeline-line {
+                left: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="app" class="min-h-screen flex flex-col">
+    
+    <!-- Navbar Component -->
+    <nav class="fixed w-full z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0 cursor-pointer" @click="scrollTo('hero')">
+                    <span class="font-code text-xl font-bold text-green-400"><ArielRocca/></span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <nav-link v-for="item in navItems" :key="item.id" :target="item.target" :text="item.text"></nav-link>
+                    </div>
+                </div>
+                <!-- Mobile menu button -->
+                <div class="-mr-2 flex md:hidden">
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-white hover:bg-slate-700 focus:outline-none">
+                        <i :class="mobileMenuOpen ? 'fas fa-times' : 'fas fa-bars'"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div v-show="mobileMenuOpen" class="md:hidden bg-slate-800">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a v-for="item in navItems" :key="item.id" @click="scrollTo(item.target); mobileMenuOpen = false" class="text-slate-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium cursor-pointer">
+                    {{ item.text }}
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header id="hero" class="flex-grow flex items-center justify-center pt-20 pb-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-slate-900 to-slate-800">
+        <div class="text-center max-w-4xl mx-auto">
+            <div class="mb-6 inline-block">
+                <span class="font-code text-green-400 bg-green-400/10 px-4 py-2 rounded-full text-sm font-semibold border border-green-400/20">
+                    PHP Developer & Data Analyst
+                </span>
+            </div>
+            <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6">
+                Hola, soy <span class="gradient-text">Ariel E. Rocca</span>
+            </h1>
+            <p class="mt-4 max-w-2xl mx-auto text-xl text-slate-400">
+                Desarrollador Web, Docente & Analista de Datos.
+            </p>
+            <p class="mt-2 max-w-2xl mx-auto text-lg text-slate-500 mb-10">
+                Especialista en PHP y Arquitecturas Web. Transformo datos en estrategia y formo a los profesionales del futuro.
+            </p>
+            <div class="flex justify-center gap-4">
+                <button @click="scrollTo('experience')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg shadow-blue-500/30">
+                    Ver Experiencia
+                </button>
+                <button @click="scrollTo('projects')" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 px-8 rounded-lg transition-all border border-slate-600">
+                    Proyectos
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Stats / Technologies Banner -->
+    <div class="bg-slate-900 border-y border-slate-800 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap justify-center gap-8 md:gap-16 text-center">
+                <div v-for="tech in technologies" :key="tech.name" class="flex flex-col items-center">
+                    <i :class="[tech.icon, 'text-4xl mb-2', tech.color]"></i>
+                    <span class="font-semibold text-slate-300">{{ tech.name }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="lg:text-center mb-12">
+                <h2 class="text-base text-blue-400 font-semibold tracking-wide uppercase font-code">Formación & Perfil</h2>
+                <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-white sm:text-4xl">
+                    Multidisciplinario
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 items-stretch">
+                <!-- Developer Card -->
+                <div class="bg-slate-700/50 p-8 rounded-2xl border border-slate-600 flex flex-col">
+                    <div class="mb-4 text-green-400 text-3xl"><i class="fas fa-code"></i></div>
+                    <h3 class="text-2xl font-bold text-white mb-4">Web Developer</h3>
+                    <p class="text-slate-300 mb-6 flex-grow">
+                        Técnico en Informática (Otto Krause) con sólida experiencia en backend PHP, microservicios y modernización de plataformas legacy.
+                    </p>
+                    <ul class="space-y-2 mt-auto text-sm">
+                        <li class="flex items-center text-slate-400">
+                            <i class="fas fa-check text-green-400 mr-2"></i> PHP (Codeigniter, Hyperf, Slim)
+                        </li>
+                        <li class="flex items-center text-slate-400">
+                            <i class="fas fa-check text-green-400 mr-2"></i> Laravel + VueJS / React
+                        </li>
+                        <li class="flex items-center text-slate-400">
+                            <i class="fas fa-check text-green-400 mr-2"></i> Node.js + MongoDB/PostgreSQL
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Teacher Card -->
+                <div class="bg-slate-700/50 p-8 rounded-2xl border border-slate-600 flex flex-col">
+                    <div class="mb-4 text-blue-400 text-3xl"><i class="fas fa-chalkboard-teacher"></i></div>
+                    <h3 class="text-2xl font-bold text-white mb-4">Docente</h3>
+                    <p class="text-slate-300 mb-6 flex-grow">
+                        Tramo de formación pedagógica (Univ. Fasta). Dicto clases de ciencias exactas e informática en institutos de salud.
+                    </p>
+                    <ul class="space-y-2 mt-auto text-sm">
+                        <li class="flex items-center text-slate-400">
+                            <i class="fas fa-check text-blue-400 mr-2"></i> Informática Aplicada
+                        </li>
+                        <li class="flex items-center text-slate-400">
+                            <i class="fas fa-check text-blue-400 mr-2"></i> Inglés Técnico / Matemática / Física
+                        </li>
+                        <li class="flex items-center text-slate-400">
+                            <i class="fas fa-check text-blue-400 mr-2"></i> Cert. Gemini for Education (Google)
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Data Analyst Card -->
+                <div class="bg-slate-700/50 p-8 rounded-2xl border border-slate-600 flex flex-col">
+                    <div class="mb-4 text-purple-400 text-3xl"><i class="fas fa-chart-pie"></i></div>
+                    <h3 class="text-2xl font-bold text-white mb-4">Analista de Datos</h3>
+                    <p class="text-slate-300 mb-6 flex-grow">
+                        Tecnicatura Superior en Análisis de Datos (Teclab). Enfoque en transformar datos crudos en insights de negocio.
+                    </p>
+                    <ul class="space-y-2 mt-auto text-sm">
+                        <li class="flex items-center text-slate-400">
+                            <i class="fas fa-check text-purple-400 mr-2"></i> Python (Pandas/NumPy)
+                        </li>
+                        <li class="flex items-center text-slate-400">
+                            <i class="fas fa-check text-purple-400 mr-2"></i> SQL & Visualización
+                        </li>
+                        <li class="flex items-center text-slate-400">
+                            <i class="fas fa-check text-purple-400 mr-2"></i> Limpieza & ETL
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section (NEW) -->
+    <section id="experience" class="py-20 bg-slate-900 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="lg:text-center mb-16">
+                <h2 class="text-base text-green-400 font-semibold tracking-wide uppercase font-code">Trayectoria</h2>
+                <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-white sm:text-4xl">
+                    Experiencia Profesional
+                </p>
+            </div>
+
+            <div class="relative">
+                <!-- Vertical Line -->
+                <div class="timeline-line hidden md:block"></div>
+
+                <div class="space-y-12">
+                    <!-- Item 1: DeCampoACampo -->
+                    <div class="relative flex flex-col md:flex-row justify-between items-center md:items-start group">
+                        <div class="md:w-5/12 mb-4 md:mb-0 md:text-right pr-0 md:pr-8">
+                            <h3 class="text-xl font-bold text-white">PHP Web Developer</h3>
+                            <h4 class="text-green-400 font-code">DeCampoACampo</h4>
+                            <p class="text-slate-400 text-sm mt-1">Feb 2024 - Presente</p>
+                        </div>
+                        <div class="absolute left-0 md:left-1/2 transform md:-translate-x-1/2 flex items-center justify-center w-8 h-8 rounded-full bg-green-500 border-4 border-slate-900 shadow-lg z-10"></div>
+                        <div class="md:w-5/12 pl-8 md:pl-8">
+                            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-sm hover:border-green-500/50 transition-colors">
+                                <p class="text-slate-300 text-sm mb-3">
+                                    Desarrollo de API para aplicaciones Web y Mobile. Mantenimiento y evolución de web legacy. Arquitectura de microservicios.
+                                </p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-2 py-1 bg-slate-900 text-xs rounded text-slate-400 border border-slate-700">PHP (Hyperf/Slim)</span>
+                                    <span class="px-2 py-1 bg-slate-900 text-xs rounded text-slate-400 border border-slate-700">MySQL</span>
+                                    <span class="px-2 py-1 bg-slate-900 text-xs rounded text-slate-400 border border-slate-700">Microservicios</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Item 2: Globant -->
+                    <div class="relative flex flex-col md:flex-row justify-between items-center md:items-start group">
+                        <div class="md:w-5/12 order-2 md:order-1 pl-8 md:pl-0 md:pr-8 md:text-right">
+                             <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-sm hover:border-blue-500/50 transition-colors">
+                                <p class="text-slate-300 text-sm mb-3">
+                                    Desarrollo web Full Stack para clientes internacionales en rubros de educación y entretenimiento. Comunicación diaria en inglés.
+                                </p>
+                                <div class="flex flex-wrap gap-2 md:justify-end">
+                                    <span class="px-2 py-1 bg-slate-900 text-xs rounded text-slate-400 border border-slate-700">React/Next.js</span>
+                                    <span class="px-2 py-1 bg-slate-900 text-xs rounded text-slate-400 border border-slate-700">Laravel + Vue</span>
+                                    <span class="px-2 py-1 bg-slate-900 text-xs rounded text-slate-400 border border-slate-700">Node.js</span>
+                                    <span class="px-2 py-1 bg-slate-900 text-xs rounded text-slate-400 border border-slate-700">WordPress</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="absolute left-0 md:left-1/2 transform md:-translate-x-1/2 flex items-center justify-center w-8 h-8 rounded-full bg-blue-500 border-4 border-slate-900 shadow-lg z-10 order-1 md:order-2 mb-4 md:mb-0"></div>
+                        <div class="md:w-5/12 order-3 pl-8 md:pl-8">
+                            <h3 class="text-xl font-bold text-white">Web Developer</h3>
+                            <h4 class="text-blue-400 font-code">Globant</h4>
+                            <p class="text-slate-400 text-sm mt-1">2017 - 2023</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 3: Docencia -->
+                    <div class="relative flex flex-col md:flex-row justify-between items-center md:items-start group">
+                        <div class="md:w-5/12 mb-4 md:mb-0 md:text-right pr-0 md:pr-8">
+                            <h3 class="text-xl font-bold text-white">Docente de Salud & Técnica</h3>
+                            <h4 class="text-purple-400 font-code">Institutos Varios</h4>
+                            <p class="text-slate-400 text-sm mt-1">Mar 2022 - Presente</p>
+                        </div>
+                        <div class="absolute left-0 md:left-1/2 transform md:-translate-x-1/2 flex items-center justify-center w-8 h-8 rounded-full bg-purple-500 border-4 border-slate-900 shadow-lg z-10"></div>
+                        <div class="md:w-5/12 pl-8 md:pl-8">
+                            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-sm hover:border-purple-500/50 transition-colors">
+                                <p class="text-slate-300 text-sm">
+                                    Dictado de materias para carreras de salud: Informática/Informática Aplicada, Inglés Técnico, Matemática y Física.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-20 bg-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-12">
+                <h2 class="text-base text-green-400 font-semibold tracking-wide uppercase font-code">Trabajos Realizados</h2>
+                <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-white sm:text-4xl">
+                    Proyectos & Casos de Estudio
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Project Card Component Usage -->
+                <project-card 
+                    v-for="project in projects" 
+                    :key="project.id" 
+                    :project="project">
+                </project-card>
+            </div>
+            
+            <div class="mt-12 text-center">
+                <a href="https://www.linkedin.com/in/arielrocca" target="_blank" class="inline-flex items-center text-slate-400 hover:text-white transition-colors">
+                    <i class="fab fa-linkedin text-xl mr-2"></i> Ver perfil completo en LinkedIn
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-gradient-to-b from-slate-900 to-slate-950">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-extrabold text-white mb-8">¿Hablamos?</h2>
+            <p class="text-xl text-slate-400 mb-8">
+                Disponible para nuevos desafíos en desarrollo backend, docencia técnica o análisis de datos.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="mailto:arielerocca@gmail.com" class="flex items-center justify-center px-8 py-4 border border-transparent text-base font-medium rounded-md text-slate-900 bg-white hover:bg-slate-200 md:text-lg transition-colors">
+                    <i class="fas fa-envelope mr-2"></i> arielerocca@gmail.com
+                </a>
+                <a href="https://www.linkedin.com/in/arielrocca" target="_blank" class="flex items-center justify-center px-8 py-4 border border-slate-600 text-base font-medium rounded-md text-white hover:bg-slate-800 md:text-lg transition-colors">
+                    <i class="fab fa-linkedin mr-2"></i> LinkedIn
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 py-8 border-t border-slate-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
+            <div class="mb-4 md:mb-0">
+                <span class="font-code text-lg font-bold text-slate-500"><ArielRocca/></span>
+                <p class="text-slate-600 text-sm mt-1">© {{ new Date().getFullYear() }} Ariel E. Rocca.</p>
+            </div>
+            <div class="flex space-x-6">
+                <a href="https://www.linkedin.com/in/arielrocca" class="text-slate-500 hover:text-white transition-colors"><i class="fab fa-linkedin text-xl"></i></a>
+                <a href="mailto:arielerocca@gmail.com" class="text-slate-500 hover:text-white transition-colors"><i class="fas fa-envelope text-xl"></i></a>
+            </div>
+        </div>
+    </footer>
+
+</div>
+
+<script>
+    // --- Componente: Nav Link ---
+    Vue.component('nav-link', {
+        props: ['target', 'text'],
+        template: `
+            <a @click="smoothScroll(target)" 
+               class="text-slate-300 hover:bg-slate-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium cursor-pointer transition-colors">
+                {{ text }}
+            </a>
+        `,
+        methods: {
+            smoothScroll(targetId) {
+                document.getElementById(targetId).scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    });
+
+    // --- Componente: Project Card ---
+    Vue.component('project-card', {
+        props: ['project'],
+        template: `
+            <div class="bg-slate-800 rounded-xl overflow-hidden border border-slate-700 card-hover flex flex-col h-full transition-all duration-300">
+                <div class="p-6 flex-grow">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-2 bg-slate-700 rounded-lg">
+                            <i :class="project.icon + ' text-2xl ' + project.iconColor"></i>
+                        </div>
+                        <span v-if="project.isWork" class="bg-slate-900 text-xs font-bold px-2 py-1 rounded text-slate-400 border border-slate-700">EXPERIENCIA</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">{{ project.title }}</h3>
+                    <p class="text-slate-400 text-sm mb-4">{{ project.description }}</p>
+                    <div class="flex flex-wrap gap-2 mt-auto">
+                        <span v-for="tag in project.tags" :key="tag" class="px-2 py-1 bg-slate-900 text-slate-300 text-xs rounded font-code border border-slate-700">
+                            {{ tag }}
+                        </span>
+                    </div>
+                </div>
+                <div class="px-6 py-4 bg-slate-900/50 border-t border-slate-700">
+                     <span class="text-sm text-slate-500 font-medium flex items-center">
+                        <i class="fas fa-info-circle mr-2"></i> {{ project.footerText }}
+                    </span>
+                </div>
+            </div>
+        `
+    });
+
+    // --- Instancia Principal de Vue ---
+    new Vue({
+        el: '#app',
+        data: {
+            mobileMenuOpen: false,
+            navItems: [
+                { id: 1, text: 'Inicio', target: 'hero' },
+                { id: 2, text: 'Sobre Mí', target: 'about' },
+                { id: 3, text: 'Experiencia', target: 'experience' },
+                { id: 4, text: 'Proyectos', target: 'projects' },
+                { id: 5, text: 'Contacto', target: 'contact' }
+            ],
+            technologies: [
+                { name: 'PHP', icon: 'fab fa-php', color: 'text-purple-400' },
+                { name: 'Laravel', icon: 'fab fa-laravel', color: 'text-red-500' },
+                { name: 'React/Vue', icon: 'fab fa-react', color: 'text-blue-400' },
+                { name: 'SQL', icon: 'fas fa-database', color: 'text-yellow-400' },
+                { name: 'Python', icon: 'fab fa-python', color: 'text-green-500' }
+            ],
+            // Datos reales basados en el CV
+            projects: [
+                 {
+                    id: 1,
+                    title: 'API Microservicios & Web Legacy',
+                    description: 'Desarrollo backend para DeCampoACampo. Creación de APIs para consumo Mobile/Web y mantenimiento de plataforma legacy.',
+                    tags: ['PHP', 'Hyperf', 'Slim', 'MySQL'],
+                    icon: 'fas fa-network-wired',
+                    iconColor: 'text-green-400',
+                    isWork: true,
+                    footerText: 'DeCampoACampo (2024)'
+                },
+                {
+                    id: 2,
+                    title: 'Web Apps Education & Entertainment',
+                    description: 'Desarrollo full stack para clientes globales en Globant. Proyectos con alto tráfico y arquitecturas modernas.',
+                    tags: ['React', 'Next.js', 'Node.js', 'WP'],
+                    icon: 'fas fa-globe-americas',
+                    iconColor: 'text-blue-400',
+                    isWork: true,
+                    footerText: 'Globant (2017-2023)'
+                },
+                {
+                    id: 3,
+                    title: 'Análisis de No-Shows Médicos',
+                    description: 'Proyecto de Data Science. Limpieza de datos, EDA y detección de correlaciones para predecir inasistencias en citas médicas.',
+                    tags: ['Python', 'Pandas', 'Seaborn', 'EDA'],
+                    icon: 'fas fa-user-clock',
+                    iconColor: 'text-purple-400',
+                    isWork: false,
+                    footerText: 'Proyecto Académico'
+                },
+                {
+                    id: 4,
+                    title: 'Plataformas de Contenido',
+                    description: 'Implementación de CMS (WordPress/Gutenberg) y soluciones personalizadas con PHP/MySQL.',
+                    tags: ['WordPress', 'PHP', 'Plugins'],
+                    icon: 'fab fa-wordpress',
+                    iconColor: 'text-slate-200',
+                    isWork: true,
+                    footerText: 'Globant'
+                },
+                 {
+                    id: 5,
+                    title: 'Dashboard de Análisis Retail',
+                    description: 'Visualización de datos de ventas minoristas para detección de tendencias. Uso de SQL y herramientas de BI.',
+                    tags: ['SQL', 'PowerBI', 'Data Viz'],
+                    icon: 'fas fa-chart-bar',
+                    iconColor: 'text-pink-400',
+                    isWork: false,
+                    footerText: 'Práctica Data Analytics'
+                }
+            ]
+        },
+        methods: {
+            scrollTo(targetId) {
+                const element = document.getElementById(targetId);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
